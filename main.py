@@ -17,11 +17,28 @@ class Item(BaseItem):
 class CreatedItem(BaseItem):
     pass
 
+class DBItem(Item, SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
 class ItemList(BaseModel):
     items: list[Item]
     page: int
     page_size: int
     size_per_page: int
+
+connect_args = {}
+
+engine = create_engine(
+    "postgresql+pg8000://postgres:28272754@localhost/digimondb",
+    echo=True,
+    connect_args=connect_args,
+)
+
+SQLModel.metadata.create_all(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 app = FastAPI()
 
@@ -29,10 +46,17 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/")
+@app.post("/items")
 async def create(item: CreatedItem) -> Item:
-    data = item.dict()
-    return BaseItem.model_validate(data)
+    data = item.model_dump()
+    dbitem = DBItem(**data)
+    with Session(engine) as sesssion:
+        sesssion.add(dbitem)
+        sesssion.commit()
+        sesssion.refresh(dbitem)
+
+    return Item.model_validate(dbitem)
+
 
 
 # @app.get("/item/{item_id}")
