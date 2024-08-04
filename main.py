@@ -11,16 +11,34 @@ class BaseItem(BaseModel):
     price: float = 0.14
     tax: float | None = None
 
+class Item(BaseItem):
+    id: int
+
+class CreatedItem(BaseItem):
+    pass
+
+class ItemList(BaseModel):
+    items: list[Item]
+    page: int
+    page_size: int
+    size_per_page: int
+
 app = FastAPI()
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/item/{item_id}")
-async def read_time(item_id: int):
-    return {"Item_id": item_id}
+@app.post("/")
+async def create(item: CreatedItem) -> Item:
+    data = item.dict()
+    return BaseItem.model_validate(data)
 
-@app.put("/items/{item_id}")
-async def create_item(item_id: int, item: BaseItem):
-    return {"item_id": item_id, **item.model_dump()}
+
+# @app.get("/item/{item_id}")
+# async def read_time(item_id: int):
+#     return {"Item_id": item_id}
+
+# @app.put("/items/{item_id}")
+# async def create_item(item_id: int, item: BaseItem):
+#     return {"item_id": item_id, **item.model_dump()}
