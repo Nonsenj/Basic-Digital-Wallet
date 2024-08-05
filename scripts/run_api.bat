@@ -1,1 +1,1 @@
-uvicorn "digimon.main:create_app" --factory --reload
+uvicorn "backend.main:create_app" --factory --reload
