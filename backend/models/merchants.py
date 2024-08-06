@@ -20,12 +20,12 @@ class UpdatedMerchant(BaseMerchant):
 
 class Merchant(BaseMerchant):
     id: int
-    items: items.Item
+    items_id: int
 
 class DBMerchant(Merchant, SQLModel, table=True):
     __tablename__ = "merchants"
     id: Optional[int] = Field(default=None, primary_key=True)
-    items: int =  Field(default=None, foreign_key="items")
+    items_id: int =  Field(default=None, foreign_key="items.id")
 
 class MerchantList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
