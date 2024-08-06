@@ -21,6 +21,7 @@ class UpdatedItem(BaseItem):
 
 
 class DBItem(Item, SQLModel, table=True):
+    __tablename__ = "items"
     id: Optional[int] = Field(default=None, primary_key=True)
 
 

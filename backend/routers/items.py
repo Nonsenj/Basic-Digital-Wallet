@@ -27,7 +27,7 @@ async def create(item: CreatedItem) -> Item:
 
     return Item.model_validate(dbitem)
 
-@router.get("{item_id}")
+@router.get("/{item_id}")
 async def read_item(item_id: int) -> Item:
     with Session(engine) as session:
         db_item = session.get(DBItem, item_id)
@@ -36,7 +36,7 @@ async def read_item(item_id: int) -> Item:
     raise HTTPException(status_code=404, detail="Item not found")
 
 
-@router.put("{item_id}")
+@router.put("/{item_id}")
 async def update_item(item_id: int, item: UpdatedItem) -> Item:
     print("update_item", item)
     data = item.model_dump()
@@ -51,7 +51,7 @@ async def update_item(item_id: int, item: UpdatedItem) -> Item:
     return Item.model_validate(db_item)
 
 
-@router.delete("{item_id}")
+@router.delete("/{item_id}")
 async def delete_item(item_id: int) -> dict:
     with Session(engine) as session:
         db_item = session.get(DBItem, item_id)
