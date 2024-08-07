@@ -11,16 +11,19 @@ class BaseMerchant(BaseModel):
     description: str | None = None
     tax_id: str | None = None
 
+class Merchant(BaseMerchant):
+    id: int
+    items_id: int
+
 class CreatedMerchant(BaseMerchant):
+    items_id: int
     pass
 
 
 class UpdatedMerchant(BaseMerchant):
     pass
 
-class Merchant(BaseMerchant):
-    id: int
-    items_id: int
+
 
 class DBMerchant(Merchant, SQLModel, table=True):
     __tablename__ = "merchants"
