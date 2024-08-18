@@ -7,7 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from .. import models
 
-router = APIRouter(prefix="/merchants")
+router = APIRouter(prefix="/merchants",  tags=["merchants"])
 
 
 @router.post("")

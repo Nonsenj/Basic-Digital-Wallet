@@ -1,35 +1,28 @@
+import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 from sqlmodel import Field, SQLModel, create_engine, Session, select, Relationship
 
-from . import merchants
 from . import users
+from . import merchants
 
-class BaseItem(BaseModel):
+class BaseTransaction(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    description: Optional[str] = None
-    price: float = 0.14
-    tax: float | None = None
-
+    item: str
+    amount: float | None
+    time_stemp: datetime.datetime | None
     merchant_id: int | None
-    user_id: int | None 
+    user_id: int | None
+    
 
-class Item(BaseItem):
+class Transaction(BaseTransaction):
     id: int
-    merchant_id: int
-
-class CreatedItem(BaseItem):
-    pass
-
-class UpdatedItem(BaseItem):
-    pass
-
-
-class DBItem(Item, SQLModel, table=True):
-    __tablename__ = "items"
+    
+class DBItem(BaseTransaction, SQLModel, table=True):
+    __tablename__ = "Transaction"
     id: Optional[int] = Field(default=None, primary_key=True)
+
     merchant_id: int = Field(default=None, foreign_key="merchants.id")
     merchant: merchants.DBMerchant = Relationship()
 
@@ -37,8 +30,8 @@ class DBItem(Item, SQLModel, table=True):
     user: users.DBUser | None = Relationship()
 
 
-class ItemList(BaseModel):
-    items: list[Item]
+class TransactionList(BaseModel):
+    transaction: list[Transaction]
     page: int
     page_size: int
     size_per_page: int

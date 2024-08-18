@@ -1,8 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
-from sqlmodel import Field, SQLModel, create_engine, Session, select
+from sqlmodel import Field, SQLModel, create_engine, Session, select, Relationship
 
 from . import items
+from . import users
 
 class BaseMerchant(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -10,13 +11,13 @@ class BaseMerchant(BaseModel):
     name: str
     description: str | None = None
     tax_id: str | None = None
+    user_id: str | None 
 
 class Merchant(BaseMerchant):
     id: int
-    items_id: int
+    user_id: int
 
 class CreatedMerchant(BaseMerchant):
-    items_id: int
     pass
 
 
@@ -25,10 +26,12 @@ class UpdatedMerchant(BaseMerchant):
 
 
 
-class DBMerchant(Merchant, SQLModel, table=True):
+class DBMerchant(BaseMerchant, SQLModel, table=True):
     __tablename__ = "merchants"
     id: Optional[int] = Field(default=None, primary_key=True)
-    items_id: int =  Field(default=None, foreign_key="items.id")
+    
+    user_id: int =  Field(default=None, foreign_key="users.id")
+    user: users.DBUser | None = Relationship()
 
 class MerchantList(BaseModel):
     model_config = ConfigDict(from_attributes=True)

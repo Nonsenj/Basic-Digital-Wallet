@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .. import deps
 from .. import models
 
-router = APIRouter(prefix="/items")
+router = APIRouter(prefix="/items",  tags=["items"])
 
 @router.get("")
 async def read_items(
