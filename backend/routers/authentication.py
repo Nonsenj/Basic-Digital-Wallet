@@ -81,5 +81,5 @@ async def authentication(
         scope="",
         expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES,
         expires_at=datetime.datetime.now() + access_token_expires,
-        issued_at=user.last_login_dat
+        issued_at=user.last_login_date
     )

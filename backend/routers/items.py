@@ -5,6 +5,7 @@ from typing import Optional, Annotated
 from sqlmodel import Field, SQLModel, Session, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from .. import deps
 from .. import models
 
 router = APIRouter(prefix="/items")
@@ -21,6 +22,7 @@ async def read_items(
 
 @router.post("")
 async def create(item: models.CreatedItem,
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
 ) -> models.Item:
     data = item.model_dump()
