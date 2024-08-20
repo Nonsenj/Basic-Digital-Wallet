@@ -51,6 +51,7 @@ async def update_item(
     item_id: int, 
     item: models.UpdatedItem,
     session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],
 ) -> models.Item:
     print("update_item", item)
     data = item.model_dump()
@@ -67,6 +68,7 @@ async def update_item(
 @router.delete("/{item_id}")
 async def delete_item(item_id: int,
     session: Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],
 ) -> dict:
     db_item = await session.get(models.DBItem, item_id)
     await session.delete(db_item)

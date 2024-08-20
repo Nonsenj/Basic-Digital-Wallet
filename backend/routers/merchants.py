@@ -6,6 +6,7 @@ from sqlmodel import Field, SQLModel, create_engine, Session, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from .. import models
+from .. import deps
 
 router = APIRouter(prefix="/merchants",  tags=["merchants"])
 
@@ -13,16 +14,16 @@ router = APIRouter(prefix="/merchants",  tags=["merchants"])
 @router.post("")
 async def create_merchant(
     merchant: models.CreatedMerchant,
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],
     session:  Annotated[AsyncSession, Depends(models.get_session)],                      
 ) -> models.Merchant:
-    print("create_merchant", merchant)
-    data = merchant.model_dump()
-    dbmerchant = models.DBMerchant(**data)
+    dbmerchant = models.DBMerchant.model_validate(merchant)
+    dbmerchant.user = current_user
+
     session.add(dbmerchant)
     await session.commit()
     await session.refresh(dbmerchant)
 
-    # return Merchant.parse_obj(dbmerchant.model_dump)
     return models.Merchant.model_validate(dbmerchant)
 
 
@@ -51,7 +52,8 @@ async def read_merchant(merchant_id: int,
 async def update_merchant(
     merchant_id: int, 
     merchant: models.UpdatedMerchant,
-    session:  Annotated[AsyncSession, Depends(models.get_session)],    
+    session:  Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],    
 ) -> models.Merchant:
     print("update_merchant", merchant)
     data = merchant.model_dump()
@@ -67,7 +69,8 @@ async def update_merchant(
 
 @router.delete("/{merchant_id}")
 async def delete_merchant(merchant_id: int,
-    session:  Annotated[AsyncSession, Depends(models.get_session)],                             
+    session:  Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],                             
 ) -> dict:
     db_merchant = await session.get(models.DBMerchant, merchant_id)
     

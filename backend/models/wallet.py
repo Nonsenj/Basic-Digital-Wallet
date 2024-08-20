@@ -10,10 +10,17 @@ class BaseWallet(BaseModel):
     owner: str
     balance: float = 0.00 
     currency: str | None
-    user_id: int | None
+    user_id: int | None = 0
+
 
 class Wallet(BaseWallet):
     id: int
+
+class CreateWallet(BaseWallet):
+    pass
+
+class UpdateWallet(BaseWallet):
+    pass
 
 class DBWallet(BaseWallet, SQLModel, table=True):
     __tablename__ = "wallet"
@@ -23,7 +30,7 @@ class DBWallet(BaseWallet, SQLModel, table=True):
     user: users.DBUser | None = Relationship()
 
 class WalletList(BaseModel):
-    wallet: list[Wallet]
+    wallets: list[Wallet]
     page: int
     page_size: int
     size_per_page: int

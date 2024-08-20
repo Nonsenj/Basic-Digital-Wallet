@@ -11,7 +11,7 @@ class BaseMerchant(BaseModel):
     name: str
     description: str | None = None
     tax_id: str | None = None
-    user_id: str | None 
+    user_id: int | None 
 
 class Merchant(BaseMerchant):
     id: int
@@ -23,8 +23,6 @@ class CreatedMerchant(BaseMerchant):
 
 class UpdatedMerchant(BaseMerchant):
     pass
-
-
 
 class DBMerchant(BaseMerchant, SQLModel, table=True):
     __tablename__ = "merchants"
