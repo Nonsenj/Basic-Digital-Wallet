@@ -14,7 +14,7 @@ class BaseItem(BaseModel):
     tax: float | None = None
 
     merchant_id: int | None
-    user_id: int | None 
+    user_id: int | None = 0
 
 class Item(BaseItem):
     id: int
@@ -27,9 +27,10 @@ class UpdatedItem(BaseItem):
     pass
 
 
-class DBItem(Item, SQLModel, table=True):
+class DBItem(BaseItem, SQLModel, table=True):
     __tablename__ = "items"
     id: Optional[int] = Field(default=None, primary_key=True)
+
     merchant_id: int = Field(default=None, foreign_key="merchants.id")
     merchant: merchants.DBMerchant = Relationship()
 

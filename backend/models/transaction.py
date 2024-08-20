@@ -5,11 +5,12 @@ from sqlmodel import Field, SQLModel, create_engine, Session, select, Relationsh
 
 from . import users
 from . import merchants
+from . import items
 
 class BaseTransaction(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    item: str
+    item_id: int
     amount: float | None
     time_stemp: datetime.datetime | None
     merchant_id: int | None
@@ -19,9 +20,12 @@ class BaseTransaction(BaseModel):
 class Transaction(BaseTransaction):
     id: int
     
-class DBItem(BaseTransaction, SQLModel, table=True):
-    __tablename__ = "Transaction"
+class DBTransaction(BaseTransaction, SQLModel, table=True):
+    __tablename__ = "transaction"
     id: Optional[int] = Field(default=None, primary_key=True)
+
+    item_id: int = Field(default=None, foreign_key="items.id")
+    item: items.DBItem = Relationship()
 
     merchant_id: int = Field(default=None, foreign_key="merchants.id")
     merchant: merchants.DBMerchant = Relationship()

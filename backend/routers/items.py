@@ -21,12 +21,14 @@ async def read_items(
         dict(items=items, page_size=0, page=0, size_per_page=0))
 
 @router.post("")
-async def create(item: models.CreatedItem,
+async def create(
+    item: models.CreatedItem,
     current_user: Annotated[models.User,Depends(deps.get_current_user)],
     session: Annotated[AsyncSession, Depends(models.get_session)],
 ) -> models.Item:
-    data = item.model_dump()
-    dbitem = models.DBItem(**data)
+    dbitem = models.DBItem.model_validate(item)
+    dbitem.user = current_user
+    
     session.add(dbitem)
     await session.commit()
     await session.refresh(dbitem)

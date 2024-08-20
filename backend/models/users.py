@@ -4,10 +4,7 @@ import pydantic
 from pydantic import BaseModel, EmailStr, ConfigDict
 from sqlmodel import SQLModel, Field
 
-from passlib.context import CryptContext
-
-#bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -85,12 +82,15 @@ class DBUser(BaseUser, SQLModel, table=True):
                 return True
         return False
     
+    async def get_encrypted_password(self, plain_password):
+        return bcrypt.hashpw(
+            plain_password.encode("utf-8"), salt=bcrypt.gensalt()
+        ).decode("utf-8")
+
     async def set_password(self, plain_password):
-        self.password = pwd_context.hash(plain_password)
+        self.password = await self.get_encrypted_password(plain_password)
 
     async def verify_password(self, plain_password):
-        print(plain_password, self.password)
-        return pwd_context.verify(plain_password, self.password)
-
-    async def is_use_citizen_id_as_password(self):
-        return pwd_context.verify(self.citizen_id, self.password)
+        return bcrypt.checkpw(
+            plain_password.encode("utf-8"), self.password.encode("utf-8")
+        )
