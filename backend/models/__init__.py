@@ -1,4 +1,4 @@
-from typing import AsyncIterable
+from typing import AsyncIterator
 from ..config import Settings
 
 from sqlmodel import Field, SQLModel, create_engine, Session, select
@@ -38,7 +38,7 @@ async def recreate_table():
         await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
 
-async def get_session() -> AsyncIterable[AsyncSession]:
+async def get_session() -> AsyncIterator[AsyncSession]:
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
     async with async_session() as session:
         yield session
