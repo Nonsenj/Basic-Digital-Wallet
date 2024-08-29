@@ -31,7 +31,8 @@ async def create_merchant(
 async def read_merchants(
     session:  Annotated[AsyncSession, Depends(models.get_session)],    
 ) -> models.MerchantList:
-    merchants = await session.exec(select(models.DBMerchant)).all()
+    result = await session.exec(select(models.DBMerchant))
+    merchants = result.all()
 
     return models.MerchantList.model_validate(
         dict(merchants=merchants, page_size=0, page=0, size_per_page=0)

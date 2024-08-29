@@ -11,7 +11,7 @@ class BaseMerchant(BaseModel):
     name: str
     description: str | None = None
     tax_id: str | None = None
-    user_id: int | None 
+    user_id: int | None = 0
 
 class Merchant(BaseMerchant):
     id: int
@@ -33,7 +33,7 @@ class DBMerchant(BaseMerchant, SQLModel, table=True):
 
 class MerchantList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    items: list[Merchant]
+    merchants: list[Merchant]
     page: int
     page_size: int
     size_per_page: int
