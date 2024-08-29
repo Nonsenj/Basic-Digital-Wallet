@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .. import models
 from .. import deps
 
-router = APIRouter(prefix="/transaction", tags=["transaction"])
+router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 
 @router.post("")
@@ -29,18 +29,21 @@ async def create_transaction(
 
 @router.get("")
 async def read_transactions(
-    session:  Annotated[AsyncSession, Depends(models.get_session)],    
+    session:  Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],    
 ) -> models.TransactionList:
-    transactions = await session.exec(select(models.DBTransaction)).all()
+    result = await session.exec(select(models.DBTransaction))
+    transaction = result.all()
 
     return models.TransactionList.model_validate(
-        dict(transactions=transactions, page_size=0, page=0, size_per_page=0)
+        dict(transactions=transaction, page_size=0, page=0, size_per_page=0)
     )
 
 
 @router.get("/{transaction_id}")
 async def read_transaction(transaction_id: int,
-    session:  Annotated[AsyncSession, Depends(models.get_session)],                            
+    session:  Annotated[AsyncSession, Depends(models.get_session)],
+    current_user: Annotated[models.User,Depends(deps.get_current_user)],                            
 ) -> models.Transaction:
     db_transaction = await session.get(models.Transaction, transaction_id)
     if db_transaction:

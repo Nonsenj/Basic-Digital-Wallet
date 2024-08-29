@@ -57,3 +57,17 @@ async def test_list_merchants(client: AsyncClient, merchant_user1: models.DBMerc
 
     assert check_merchant["id"] == merchant_user1.id
     assert check_merchant["name"] == merchant_user1.name
+
+@pytest.mark.asyncio
+async def test_delete_merchants(
+    client: AsyncClient, merchant_user1: models.DBMerchant, token_user1: models.Token,
+):
+    headers = {"Authorization": f"{token_user1.token_type} {token_user1.access_token}"}
+
+    response = await client.delete(
+        f"/merchants/{merchant_user1.id}", headers=headers
+    )
+
+    data = response.json()
+
+    assert data == {"message": "delete success"}

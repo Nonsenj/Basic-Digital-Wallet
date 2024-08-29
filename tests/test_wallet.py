@@ -59,3 +59,17 @@ async def test_list_wallets(client: AsyncClient, wallet_user1:models.DBWallet, t
 
     assert check_wallet["id"] == wallet_user1.id
     assert check_wallet["owner"] == wallet_user1.owner
+
+@pytest.mark.asyncio
+async def test_delete_wallets(
+    client: AsyncClient, wallet_user1: models.DBWallet, token_user1: models.Token,
+):
+    headers = {"Authorization": f"{token_user1.token_type} {token_user1.access_token}"}
+
+    response = await client.delete(
+        f"/wallets/{wallet_user1.id}", headers=headers
+    )
+
+    data = response.json()
+
+    assert data == {"message": "delete success"}

@@ -14,7 +14,7 @@ class BaseTransaction(BaseModel):
 
     item_id: int
     amount: float | None = 1
-    merchant_id: int | None
+    merchant_id: int | None = 0
     user_id: int | None = 0
     
 
@@ -44,7 +44,7 @@ class DBTransaction(BaseTransaction, SQLModel, table=True):
 
 
 class TransactionList(BaseModel):
-    transaction: list[Transaction]
+    transactions: list[Transaction]
     page: int
     page_size: int
     size_per_page: int

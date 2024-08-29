@@ -179,3 +179,28 @@ async def example_wallet_user1(
     await session.commit()
     await session.refresh(wallet)
     return wallet
+
+@pytest_asyncio.fixture(name="transaction_user1")
+async def example_transaction_user1(
+    session: models.AsyncSession, user1: models.DBUser, merchant_user1: models.DBMerchant, item_user1: models.DBItem
+) -> models.DBTransaction:
+    amount = 10
+
+    query = await session.exec(
+        models.select(models.DBTransaction)
+        .where(models.DBTransaction.user_id == user1.id, models.DBTransaction.amount == amount)
+        .limit(1)
+    )
+
+    transaction = query.one_or_none()
+    if transaction:
+        return transaction
+
+    transaction = models.DBTransaction(
+        item_id=item_user1.id, amount= amount, merchant_id=merchant_user1.id, user_id=user1.id, 
+    )
+
+    session.add(transaction)
+    await session.commit()
+    await session.refresh(transaction)
+    return transaction
