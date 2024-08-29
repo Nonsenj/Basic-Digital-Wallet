@@ -8,25 +8,25 @@ import bcrypt
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-    email: str = pydantic.Field(example="admin@email.local")
-    username: str = pydantic.Field(example="admin")
-    first_name: str = pydantic.Field(example="Firstname")
-    last_name: str = pydantic.Field(example="Lastname")
+    email: str = pydantic.Field(json_schema_extra="admin@email.local")
+    username: str = pydantic.Field(json_schema_extra="admin")
+    first_name: str = pydantic.Field(json_schema_extra="Firstname")
+    last_name: str = pydantic.Field(json_schema_extra="Lastname")
 
 class User(BaseUser):
     id: int
     last_login_date: datetime.datetime | None = pydantic.Field(
-        example="2023-01-01T00:00:00.000000", default=None
+        json_schema_extra="2023-01-01T00:00:00.000000", default=None
     )
     register_date: datetime.datetime | None = pydantic.Field(
-        example="2023-01-01T00:00:00.000000", default=None
+        json_schema_extra="2023-01-01T00:00:00.000000", default=None
     )
 
 class ReferenceUser(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
-    username: str = pydantic.Field(example="admin")
-    first_name: str = pydantic.Field(example="Firstname")
-    last_name: str = pydantic.Field(example="Lastname")
+    username: str = pydantic.Field(json_schema_extra="admin")
+    first_name: str = pydantic.Field(json_schema_extra="Firstname")
+    last_name: str = pydantic.Field(json_schema_extra="Lastname")
 
 class UserList(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -45,7 +45,7 @@ class ResetedPassword(BaseModel):
     citizen_id: str
 
 class RegisteredUser(BaseUser):
-    password: str = pydantic.Field(example="password")
+    password: str = pydantic.Field(json_schema_extra="password")
 
 class UpdatedUser(BaseUser):
     roles: list[str]
