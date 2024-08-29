@@ -9,7 +9,7 @@ class BaseWallet(BaseModel):
 
     owner: str
     balance: float = 0.00 
-    currency: str | None
+    currency: str | None = None
     user_id: int | None = 0
 
 

@@ -59,3 +59,17 @@ async def test_list_items(client: AsyncClient, item_user1: models.DBItem):
 
     assert check_item["id"] == item_user1.id
     assert check_item["name"] == item_user1.name
+
+@pytest.mark.asyncio
+async def test_delete_items(
+    client: AsyncClient, item_user1: models.DBItem, token_user1: models.Token,
+):
+    headers = {"Authorization": f"{token_user1.token_type} {token_user1.access_token}"}
+
+    response = await client.delete(
+        f"/items/{item_user1.id}", headers=headers
+    )
+
+    data = response.json()
+
+    assert data == {"message": "delete success"}

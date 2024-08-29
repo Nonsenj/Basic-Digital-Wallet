@@ -133,7 +133,7 @@ async def example_merchant_user1(
 
 @pytest_asyncio.fixture(name="item_user1")
 async def example_item_user1(
-    session: models.AsyncSession, user1: models.DBItem, merchant_user1: models.DBMerchant
+    session: models.AsyncSession, user1: models.DBUser, merchant_user1: models.DBMerchant
 ) -> models.DBItem:
     name = "item1"
 
@@ -155,3 +155,27 @@ async def example_item_user1(
     await session.commit()
     await session.refresh(item)
     return item
+
+@pytest_asyncio.fixture(name="wallet_user1")
+async def example_wallet_user1(
+    session: models.AsyncSession, user1: models.DBUser
+) -> models.DBWallet:
+    owner = "wallet1"
+
+    query = await session.exec(
+        models.select(models.DBWallet)
+        .where(models.DBWallet.owner == owner, models.DBWallet.user_id == user1.id)
+        .limit(1)
+    )
+    wallet = query.one_or_none()
+    if wallet:
+        return wallet
+
+    wallet = models.DBWallet(
+        owner=owner, user=user1, balance=100, 
+    )
+
+    session.add(wallet)
+    await session.commit()
+    await session.refresh(wallet)
+    return wallet

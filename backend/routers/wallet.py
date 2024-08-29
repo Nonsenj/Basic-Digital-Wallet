@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .. import models
 from .. import deps
 
-router = APIRouter(prefix="/wallet", tags=["wallet"])
+router = APIRouter(prefix="/wallets", tags=["wallets"])
 
 @router.get("")
 async def read_wallets(
